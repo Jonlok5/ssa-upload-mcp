@@ -1,0 +1,29 @@
+{
+  "manifest_version": "0.2",
+  "name": "ssa-upload",
+  "display_name": "SSA Upload (Legend Roofs)",
+  "version": "1.0.0",
+  "description": "Upload original files (PDFs, photos, invoices, sub estimates) into job folders in the classic SSA CRM at crm.ssacapp.com, from a file on this computer or a link. Runs on this computer so SSA sees the office connection.",
+  "author": { "name": "Legend Roofs & Construction LLC" },
+  "server": {
+    "type": "node",
+    "entry_point": "local/server.js",
+    "mcp_config": {
+      "command": "node",
+      "args": ["${__dirname}/local/server.js"],
+      "env": {
+        "SSA_USERNAME": "${user_config.ssa_username}",
+        "SSA_PASSWORD": "${user_config.ssa_password}"
+      }
+    }
+  },
+  "tools": [
+    { "name": "ssa_list_job_folders", "description": "List a job's file folders and which ones the customer can see." },
+    { "name": "ssa_upload_file", "description": "Upload a file into a folder on an SSA job from a file on this computer, a link, or base64 bytes." }
+  ],
+  "user_config": {
+    "ssa_username": { "type": "string", "title": "SSA username", "description": "Your crm.ssacapp.com login name", "required": true },
+    "ssa_password": { "type": "string", "title": "SSA password", "description": "Your crm.ssacapp.com password (stored securely by the Claude app)", "sensitive": true, "required": true }
+  },
+  "compatibility": { "platforms": ["win32", "darwin"], "runtimes": { "node": ">=20.0.0" } }
+}
