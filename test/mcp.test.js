@@ -76,7 +76,8 @@ test("initialize and tools/list", async () => {
   const init = await handleBody({ jsonrpc: "2.0", id: 1, method: "initialize", params: { protocolVersion: "2025-06-18" } }, ctxFor(fake));
   assert.equal(init.result.serverInfo.name, "ssa-upload-mcp");
   const list = await handleBody({ jsonrpc: "2.0", id: 2, method: "tools/list" }, ctxFor(fake));
-  assert.deepEqual(list.result.tools.map((t) => t.name), ["ssa_list_job_folders", "ssa_upload_file"]);
+  assert.ok(["ssa_list_job_folders", "ssa_upload_file", "ssa_read_job", "ssa_add_job_note", "ssa_create_client", "ssa_update_job", "ssa_create_lead"].every((n) => list.result.tools.some((t) => t.name === n)));
+  assert.ok(!list.result.tools.some((t) => /delete/i.test(t.name)));
 });
 
 test("parseFolders marks customer-visible folders", () => {

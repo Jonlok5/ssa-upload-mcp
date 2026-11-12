@@ -2,15 +2,19 @@
   "manifest_version": "0.2",
   "name": "ssa-upload",
   "display_name": "SSA Upload (Legend Roofs)",
-  "version": "1.0.2",
-  "description": "Upload original files (PDFs, photos, invoices, sub estimates) into job folders in the classic SSA CRM at crm.ssacapp.com, from a file in the SSA Uploads folder on this computer or a link. Runs on this computer so SSA sees the office connection.",
-  "author": { "name": "Legend Roofs & Construction LLC" },
+  "version": "1.1.0",
+  "description": "Work in the classic SSA CRM (crm.ssacapp.com) from this computer: upload original files into job folders, read jobs and clients, add job notes, and create or update clients, jobs and leads. It cannot delete anything, never touches the customer portal password or the email-everyone switch, and only saves after the change is approved.",
+  "author": {
+    "name": "Legend Roofs & Construction LLC"
+  },
   "server": {
     "type": "node",
     "entry_point": "local/server.js",
     "mcp_config": {
       "command": "node",
-      "args": ["${__dirname}/local/server.js"],
+      "args": [
+        "${__dirname}/local/server.js"
+      ],
       "env": {
         "SSA_USERNAME": "${user_config.ssa_username}",
         "SSA_PASSWORD": "${user_config.ssa_password}"
@@ -18,12 +22,73 @@
     }
   },
   "tools": [
-    { "name": "ssa_list_job_folders", "description": "List a job's file folders and which ones the customer can see." },
-    { "name": "ssa_upload_file", "description": "Upload a file into a folder on an SSA job from a file on this computer, a link, or base64 bytes." }
+    {
+      "name": "ssa_list_job_folders",
+      "description": "List the file folders on one SSA job (from the job page's upload form), and which ones the customer can see in their portal."
+    },
+    {
+      "name": "ssa_upload_file",
+      "description": "Upload a file into a folder on an SSA job, server-side, exactly as the job page's New File form does."
+    },
+    {
+      "name": "ssa_read_job",
+      "description": "Read one SSA job as plain text: the job page (status, type, salesman, dates, address, notes, trades, files) and, with include_accounting, the Job Accounting page (expenses, payments, totals)."
+    },
+    {
+      "name": "ssa_read_client",
+      "description": "Read one SSA client (customer) record as plain text: contact details and their jobs."
+    },
+    {
+      "name": "ssa_form_fields",
+      "description": "List the fields (and the allowed choices for dropdowns) on an SSA form before filling it: new_client, edit_client, new_job, edit_job or new_lead."
+    },
+    {
+      "name": "ssa_add_job_note",
+      "description": "Add a note to an SSA job (the job's Add Note form)."
+    },
+    {
+      "name": "ssa_create_client",
+      "description": "Create a new SSA client (customer)."
+    },
+    {
+      "name": "ssa_update_client",
+      "description": "Change fields on an existing SSA client."
+    },
+    {
+      "name": "ssa_create_job",
+      "description": "Add a new job to an existing SSA client."
+    },
+    {
+      "name": "ssa_update_job",
+      "description": "Change fields on an existing SSA job (status, type, dates, salesman, address, etc.)."
+    },
+    {
+      "name": "ssa_create_lead",
+      "description": "Create a new SSA lead (prospect / door knock)."
+    }
   ],
   "user_config": {
-    "ssa_username": { "type": "string", "title": "SSA username", "description": "Your crm.ssacapp.com login name", "required": true },
-    "ssa_password": { "type": "string", "title": "SSA password", "description": "Your crm.ssacapp.com password (stored securely by the Claude app)", "sensitive": true, "required": true }
+    "ssa_username": {
+      "type": "string",
+      "title": "SSA username",
+      "description": "Your crm.ssacapp.com login name",
+      "required": true
+    },
+    "ssa_password": {
+      "type": "string",
+      "title": "SSA password",
+      "description": "Your crm.ssacapp.com password (stored securely by the Claude app)",
+      "sensitive": true,
+      "required": true
+    }
   },
-  "compatibility": { "platforms": ["win32", "darwin"], "runtimes": { "node": ">=20.0.0" } }
+  "compatibility": {
+    "platforms": [
+      "win32",
+      "darwin"
+    ],
+    "runtimes": {
+      "node": ">=20.0.0"
+    }
+  }
 }
