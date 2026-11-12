@@ -4,7 +4,7 @@
 // Environment (filled in by the extension's install screen, see manifest.json):
 //   SSA_USERNAME, SSA_PASSWORD
 
-import { readFile, stat } from "node:fs/promises";
+import { readFile, stat, realpath } from "node:fs/promises";
 import path from "node:path";
 import { createInterface } from "node:readline";
 import { createClient, SsaError } from "../lib/ssa.js";
@@ -12,17 +12,34 @@ import { handleBody } from "../lib/mcp.js";
 
 const MAX_BYTES = 20 * 1024 * 1024;
 
+// Only files inside the user's Downloads folder may be uploaded. Anything else is refused,
+// so a tricked request can't pull private files from elsewhere on this computer.
+const HOME = process.env.USERPROFILE || process.env.HOME || "";
+const ALLOWED_ROOT = path.join(HOME, "Downloads");
+
+function inside(child, parent) {
+  const rel = path.relative(parent.toLowerCase(), child.toLowerCase());
+  return rel !== "" && !rel.startsWith("..") && !path.isAbsolute(rel);
+}
+
 async function readLocalFile(p) {
-  const full = path.resolve(String(p).replace(/^~(?=$|[\\/])/, process.env.USERPROFILE || process.env.HOME || "~"));
-  let info;
+  if (!HOME) throw new SsaError("Can't find the home folder on this computer.");
+  const given = String(p).replace(/^~(?=$|[\\/])/, HOME);
+  const full = path.resolve(path.isAbsolute(given) ? given : path.join(ALLOWED_ROOT, given));
+  let real, root;
   try {
-    info = await stat(full);
+    root = await realpath(ALLOWED_ROOT);
+    real = await realpath(full);
   } catch {
     throw new SsaError(`No file at ${full}.`);
   }
-  if (!info.isFile()) throw new SsaError(`${full} is not a file.`);
+  if (!inside(real, root)) {
+    throw new SsaError(`Only files in ${ALLOWED_ROOT} can be uploaded. Move the file to Downloads first.`);
+  }
+  const info = await stat(real);
+  if (!info.isFile()) throw new SsaError(`${real} is not a file.`);
   if (info.size > MAX_BYTES) throw new SsaError("File is larger than 20 MB.");
-  return new Uint8Array(await readFile(full));
+  return new Uint8Array(await readFile(real));
 }
 
 function send(obj) {
