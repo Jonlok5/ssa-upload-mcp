@@ -2,8 +2,8 @@
   "manifest_version": "0.2",
   "name": "ssa-upload",
   "display_name": "SSA Upload (Legend Roofs)",
-  "version": "1.0.1",
-  "description": "Upload original files (PDFs, photos, invoices, sub estimates) into job folders in the classic SSA CRM at crm.ssacapp.com, from a file in Downloads on this computer or a link. Runs on this computer so SSA sees the office connection.",
+  "version": "1.0.2",
+  "description": "Upload original files (PDFs, photos, invoices, sub estimates) into job folders in the classic SSA CRM at crm.ssacapp.com, from a file in the SSA Uploads folder on this computer or a link. Runs on this computer so SSA sees the office connection.",
   "author": { "name": "Legend Roofs & Construction LLC" },
   "server": {
     "type": "node",

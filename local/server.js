@@ -4,7 +4,7 @@
 // Environment (filled in by the extension's install screen, see manifest.json):
 //   SSA_USERNAME, SSA_PASSWORD
 
-import { readFile, stat, realpath } from "node:fs/promises";
+import { readFile, stat, realpath, mkdir } from "node:fs/promises";
 import path from "node:path";
 import { createInterface } from "node:readline";
 import { createClient, SsaError } from "../lib/ssa.js";
@@ -12,10 +12,11 @@ import { handleBody } from "../lib/mcp.js";
 
 const MAX_BYTES = 20 * 1024 * 1024;
 
-// Only files inside the user's Downloads folder may be uploaded. Anything else is refused,
-// so a tricked request can't pull private files from elsewhere on this computer.
+// Only files inside a dedicated "SSA Uploads" folder may be uploaded. Anything else is refused,
+// so a tricked request can't pull private files from elsewhere on this computer (Downloads included).
 const HOME = process.env.USERPROFILE || process.env.HOME || "";
-const ALLOWED_ROOT = path.join(HOME, "Downloads");
+const ALLOWED_ROOT = path.join(HOME, "SSA Uploads");
+if (HOME) mkdir(ALLOWED_ROOT, { recursive: true }).catch(() => {});
 
 function inside(child, parent) {
   const rel = path.relative(parent.toLowerCase(), child.toLowerCase());
@@ -34,7 +35,7 @@ async function readLocalFile(p) {
     throw new SsaError(`No file at ${full}.`);
   }
   if (!inside(real, root)) {
-    throw new SsaError(`Only files in ${ALLOWED_ROOT} can be uploaded. Move the file to Downloads first.`);
+    throw new SsaError(`Only files in ${ALLOWED_ROOT} can be uploaded. Copy the file into that folder first.`);
   }
   const info = await stat(real);
   if (!info.isFile()) throw new SsaError(`${real} is not a file.`);
