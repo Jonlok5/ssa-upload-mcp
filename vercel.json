@@ -1,0 +1,5 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": { "api/mcp/[key].js": { "maxDuration": 60 } },
+  "headers": [ { "source": "/api/(.*)", "headers": [ { "key": "Cache-Control", "value": "no-store" } ] } ]
+}

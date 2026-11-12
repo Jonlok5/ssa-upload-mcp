@@ -1,0 +1,9 @@
+{
+  "name": "ssa-upload-mcp",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SSA (crm.ssacapp.com) file-upload MCP server for Claude, hosted on Vercel (zero dependencies)",
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": { "test": "node --test test/*.test.js" }
+}
