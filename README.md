@@ -6,12 +6,16 @@ a job's folders in the classic SSA CRM at **crm.ssacapp.com**. No browser, no fi
 - **Zero dependencies.** One Vercel serverless function, plain Node.
 - **Your login stays with you.** The SSA username and password live only in Vercel's environment variables.
 - **Locked down.** The connector URL contains a long secret; without it the server answers 404.
-- **Can't delete.** It only reads the job page and posts the New File form.
+- **Guard rails.** Deleting, voiding or removing anything needs `delete_approved=true`, and anything that emails or texts someone needs `send_approved=true`; each is set only after Jon's specific yes. Login, logout and password pages are off limits, and the customer portal password is never touched.
 
 ## Tools
 
 | Tool | What it does |
 |---|---|
+| `ssa_read_page` | Opens **any** SSA page by its query string and returns the text, every form (fields, current values, dropdown choices, buttons) and the links. Read-only; action links are refused here. |
+| `ssa_submit_form` | Fills in and submits **any** form on any SSA page, with file attachments (e.g. a Job Accounting expense with the receipt image). Only the given fields change; SSA's prefilled and hidden values are kept. |
+| `ssa_follow_link` | Opens an SSA link that does something (mark done, approve, change status). |
+| `ssa_get_file` | Opens a file stored on a job (receipt photo, PDF); images come back viewable. Optional copy to `SSA Downloads` on the office computer. The SSA session cookie is never sent to S3. |
 | `ssa_list_job_folders` | Lists a job's folders and which ones the customer can see. |
 | `ssa_upload_file` | Uploads a file to a job folder from a direct https link (`source_url`) or base64 bytes (`content_base64`). Creates the folder only with `create_folder: true`. Refuses `client/` folders unless `allow_customer_visible: true`. Checks the job page afterwards. |
 

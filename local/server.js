@@ -4,7 +4,7 @@
 // Environment (filled in by the extension's install screen, see manifest.json):
 //   SSA_USERNAME, SSA_PASSWORD
 
-import { readFile, stat, realpath, mkdir } from "node:fs/promises";
+import { readFile, writeFile, stat, realpath, mkdir } from "node:fs/promises";
 import path from "node:path";
 import { createInterface } from "node:readline";
 import { createClient, SsaError } from "../lib/ssa.js";
@@ -43,6 +43,17 @@ async function readLocalFile(p) {
   return new Uint8Array(await readFile(real));
 }
 
+// Files opened with ssa_get_file(save_to_computer) land only in "SSA Downloads".
+const DOWNLOAD_ROOT = path.join(HOME, "SSA Downloads");
+async function writeLocalFile(name, bytes) {
+  if (!HOME) throw new SsaError("Can't find the home folder on this computer.");
+  const safe = String(name).replace(/[\\/:*?"<>|]+/g, "-").replace(/^\.+/, "").trim() || "file";
+  await mkdir(DOWNLOAD_ROOT, { recursive: true });
+  const full = path.join(DOWNLOAD_ROOT, safe);
+  await writeFile(full, bytes);
+  return full;
+}
+
 function send(obj) {
   process.stdout.write(JSON.stringify(obj) + "\n");
 }
@@ -61,7 +72,7 @@ rl.on("line", async (line) => {
   // A fresh SSA session per request keeps things simple and avoids stale logins.
   const ctx = {
     ssa: createClient({ username: process.env.SSA_USERNAME, password: process.env.SSA_PASSWORD }),
-    deps: { readLocalFile },
+    deps: { readLocalFile, writeLocalFile },
   };
   try {
     const out = await handleBody(msg, ctx);

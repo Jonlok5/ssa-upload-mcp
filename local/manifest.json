@@ -2,8 +2,8 @@
   "manifest_version": "0.2",
   "name": "ssa-upload",
   "display_name": "SSA Upload (Legend Roofs)",
-  "version": "1.1.0",
-  "description": "Work in the classic SSA CRM (crm.ssacapp.com) from this computer: upload original files into job folders, read jobs and clients, add job notes, and create or update clients, jobs and leads. It cannot delete anything, never touches the customer portal password or the email-everyone switch, and only saves after the change is approved.",
+  "version": "1.2.0",
+  "description": "Jon's connector to the classic SSA CRM (crm.ssacapp.com), run from this computer: open any SSA page, fill in and submit any form (Job Accounting expenses with receipt images, tasks, trades, paperwork, leads, jobs, clients), click action links, open job files, and upload original files. Deleting/voiding and sending emails or texts each need Jon's specific yes. Never touches the customer portal password.",
   "author": {
     "name": "Legend Roofs & Construction LLC"
   },
@@ -22,6 +22,22 @@
     }
   },
   "tools": [
+    {
+      "name": "ssa_read_page",
+      "description": "Open any SSA page and read its text, forms (fields, choices, buttons) and links. Read-only."
+    },
+    {
+      "name": "ssa_submit_form",
+      "description": "Fill in and submit any form on any SSA page, with file attachments (e.g. Job Accounting expense with the receipt image)."
+    },
+    {
+      "name": "ssa_follow_link",
+      "description": "Open an SSA action link (mark done, approve, change status; deletes and sends need Jon's specific yes)."
+    },
+    {
+      "name": "ssa_get_file",
+      "description": "Open a file stored on an SSA job (receipt photos, PDFs); optionally save a copy to the SSA Downloads folder."
+    },
     {
       "name": "ssa_list_job_folders",
       "description": "List the file folders on one SSA job (from the job page's upload form), and which ones the customer can see in their portal."
